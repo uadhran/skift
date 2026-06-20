@@ -60,7 +60,7 @@ Res<Arc<Hal::Vmm>> createVmm() {
 }
 
 Res<> init(Handover::Payload&) {
-    notImplemented();
+    return Ok();
 }
 
 [[noreturn]] void stop() {

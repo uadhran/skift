@@ -72,7 +72,12 @@ Res<> enterUserspace(Handover::Payload& payload, Str init) {
     }
 
     // mapping handover
+#ifdef __ck_arch_x86_64__
+    // NOTE: x86_64 -mcmodel=kernel tomfoolerie
     auto handoverBase = ((usize)&payload) - Handover::KERNEL_BASE;
+#else
+    auto handoverBase = ((usize)&payload) - Handover::UPPER_HALF;
+#endif
     auto handoverSize = payload.size;
     auto handoverVmo = try$(Vmo::makeDma({handoverBase, handoverSize}));
     handoverVmo->label("handover");

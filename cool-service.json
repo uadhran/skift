@@ -1,0 +1,7 @@
+{
+    "id": "cool-cat-service",
+    "provides": {
+        "ipc:strats-fs": "/fs"
+    },
+    "requires": {}
+}

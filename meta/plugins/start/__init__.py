@@ -138,7 +138,7 @@ def _(args: StartArgs) -> None:
         kernel = img.install("hjert", f"kernel-{args.arch}")[0]
         qemu = [
             "qemu-system-riscv64",
-            "-m", "512M",
+            "-m", "1G",
             "-machine",
             "virt",
             "-bios",

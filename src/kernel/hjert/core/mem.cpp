@@ -205,6 +205,8 @@ export Res<> initMem(Handover::Payload& payload) {
 
     _pmm->dump();
 
+#ifdef __ck_arch_x86_64__
+    // NOTE: x86_64 -mcmodel=kernel tomfoolerie
     logDebugIf(DEBUG_MEM, "mem: mapping kernel...");
     try$(
         Arch::globalVmm().mapRange(
@@ -219,6 +221,7 @@ export Res<> initMem(Handover::Payload& payload) {
             {Hal::Vmm::READ, Hal::Vmm::WRITE}
         )
     );
+#endif
 
     logDebugIf(DEBUG_MEM, "mem: mapping upper half...");
     try$(

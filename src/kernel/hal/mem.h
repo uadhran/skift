@@ -7,7 +7,9 @@ namespace Hal {
 
 inline constexpr usize PAGE_SIZE = 0x1000;
 
-#ifdef __ck_bits_64__
+#ifdef __ck_paging_sv39__
+inline constexpr usize UPPER_HALF = 0xffffffff00000000;
+#elifdef __ck_bits_64__
 inline constexpr usize UPPER_HALF = 0xffff800000000000;
 #else
 inline constexpr usize UPPER_HALF = 0xC0000000;
