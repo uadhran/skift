@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "karm-sys.hjert",
+    "type": "lib",
+    "props": {
+        "export-headers": "includes"
+    },
+    "enableIf": {
+        "sys": [
+            "kernel"
+        ]
+    },
+    "requires": [
+        "abi",
+        "karm-core"
+    ],
+    "provides": [
+        "karm-sys.impl",
+        "karm-sys.async",
+        "karm-sys.sandbox"
+    ]
+}
