@@ -1,4 +1,4 @@
-from cutekit import cli, model
+from cutekit import cli, model, shell
 
 _REPLACED_ON_KERNEL = {
     "karm-math": "karm-math.hjert",
@@ -39,9 +39,10 @@ _KERNEL_DISABLE_PREFIXES = (
 )
 
 
+# hjert is the only executable that resolves on kernel targets; everything
+# else (opstart included) is gated to other `sys` values by its own manifest.
 _KERNEL_EXECUTABLES = {
     "hjert",
-    "opstart",
 }
 
 
@@ -114,23 +115,23 @@ def _wrapBuildCommand() -> None:
     original = command.callable
 
     def wrapper(args):
-        attempts = (
-            2
-            if _isKernelBuild(args)
+        # cutekit emits a single global C++20-module dyndep file, so a clean
+        # kernel build can fail to converge on the first ninja pass and succeed
+        # on a second invocation. Retry once for that case only -- catch the
+        # build failure (ninja non-zero exit -> ShellException), never config or
+        # setup errors -- so genuine breakage still surfaces immediately.
+        retryable = (
+            _isKernelBuild(args)
             and not getattr(args, "database", False)
             and not getattr(args, "universe", False)
-            else 1
         )
-        lastError: Exception | None = None
-        for attempt in range(attempts):
-            try:
-                return original(args)
-            except Exception as error:
-                lastError = error
-                if attempt + 1 >= attempts:
-                    raise
-        if lastError is not None:
-            raise lastError
+        try:
+            return original(args)
+        except shell.ShellException:
+            if not retryable:
+                raise
+        print("kernel build did not converge on the first pass, retrying once...")
+        return original(args)
 
     command.callable = wrapper
 
